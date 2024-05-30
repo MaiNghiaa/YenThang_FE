@@ -3,31 +3,49 @@ import axios from "axios";
 
 function ProductForm() {
   const [formData, setFormData] = useState({
-    image: "",
+    image: null,
     title: "",
     description: "",
     price: "",
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    const { name, value, files } = e.target;
+    if (name === "image") {
+      setFormData({
+        ...formData,
+        [name]: files[0], // Store the file object directly
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const uploadData = new FormData();
+    uploadData.append("image", formData.image);
+    uploadData.append("title", formData.title);
+    uploadData.append("description", formData.description);
+    uploadData.append("price", formData.price);
+
     try {
       const response = await axios.post(
-        "http://localhost:3000/createProduct",
-        formData
+        "http://localhost:3000/CreateProduct",
+        uploadData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
       console.log(response.data); // Handle response from server
       // Reset form after successful submission
       setFormData({
-        image: "",
+        image: null,
         title: "",
         description: "",
         price: "",
@@ -42,15 +60,9 @@ function ProductForm() {
     <div>
       <h1>Add Product</h1>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="image">Image URL:</label>
+        <label htmlFor="image">Image:</label>
         <br />
-        <input
-          type="file"
-          id="image"
-          name="image"
-          value={formData.image}
-          onChange={handleChange}
-        />
+        <input type="file" id="image" name="image" onChange={handleChange} />
         <br />
         <label htmlFor="title">Title:</label>
         <br />
