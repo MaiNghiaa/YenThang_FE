@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "../LoginForm/LoginForm.css";
+import "./LoginForm.css";
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 
